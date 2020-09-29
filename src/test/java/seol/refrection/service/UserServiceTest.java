@@ -78,8 +78,9 @@ class UserServiceTest {
 		flushAndClear();
 
 		Product otherEntity1 = Product.builder().productId("pro").build();
-		Assertions.assertThrows(Exception.class, () ->
+		Exception exception = Assertions.assertThrows(Exception.class, () ->
 				managedUser.update(otherEntity1, "etc", "userName"));
+		log.info(exception.getMessage());
 
 //		System otherEntity2 = System.builder().systemId("sys").build();
 //		Assertions.assertThrows(Exception.class, () ->

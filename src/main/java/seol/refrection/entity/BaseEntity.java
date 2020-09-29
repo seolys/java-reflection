@@ -17,8 +17,11 @@ public abstract class BaseEntity {
 
 	@SneakyThrows
 	public <Entity extends BaseEntity> void update(Entity newEntity, String ...ignoreColumns) {
+		// BaseEntity를 상속받았지만, this와 newEntity가 서로 다른 엔티티일 경우 에러 발생.
 		if(!this.getClass().isAssignableFrom(newEntity.getClass())) {
-			throw new RuntimeException();
+			String message = String.format("Entity mismatch. (updateTarget: %s, newEntity: %s)", this.getClass().getName(),
+					newEntity.getClass().getName());
+			throw new RuntimeException(message);
 		}
 		List<String> ignoreColumnChecker = Arrays.asList(ignoreColumns);
 		Field[] declaredFields = newEntity.getClass().getDeclaredFields();
