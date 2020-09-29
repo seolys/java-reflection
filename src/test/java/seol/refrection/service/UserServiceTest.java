@@ -10,9 +10,12 @@ import javax.persistence.Id;
 import javax.transaction.Transactional;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import seol.refrection.entity.Product;
+import seol.refrection.entity.System;
 import seol.refrection.entity.User;
 import seol.refrection.entity.UserStatus;
 import seol.refrection.repository.UserRepository;
@@ -26,7 +29,7 @@ class UserServiceTest {
 	@Autowired EntityManager entityManager;
 
 	@Test
-	void Test() {
+	void test1() {
 		User user = User.builder()
 				.userId("seolnavy")
 				.userName("seol")
@@ -48,6 +51,39 @@ class UserServiceTest {
 				.build();
 		this.update(managedUser, newUser, "etc", "userName");
 		flushAndClear();
+	}
+
+	@Test
+	void test2() {
+		User user = User.builder()
+				.userId("seolnavy")
+				.userName("seol")
+				.age(32)
+				.etc("test")
+				.userStatus(UserStatus.A)
+				.haveMoney(new BigDecimal(50000))
+				.build();
+		userRepository.save(user);
+		flushAndClear();
+
+		User managedUser = userRepository.findById("seolnavy").get();
+		User newUser = User.builder()
+				.userId("seolnavy")
+				.userName("seolys")
+				.age(30)
+				.userStatus(UserStatus.B)
+				.haveMoney(new BigDecimal(1000))
+				.build();
+		managedUser.update(newUser, "etc", "userName");
+		flushAndClear();
+
+		Product otherEntity1 = Product.builder().productId("pro").build();
+		Assertions.assertThrows(Exception.class, () ->
+				managedUser.update(otherEntity1, "etc", "userName"));
+
+//		System otherEntity2 = System.builder().systemId("sys").build();
+//		Assertions.assertThrows(Exception.class, () ->
+//				managedUser.update(otherEntity2, "etc", "userName"));
 	}
 
 	@SneakyThrows

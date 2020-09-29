@@ -15,19 +15,9 @@ import org.hibernate.annotations.DynamicUpdate;
 
 @Data @Builder
 @NoArgsConstructor @AllArgsConstructor
-@Entity @Table(name = "user")
+@Entity @Table(name = "product")
 @DynamicUpdate
-public class User extends BaseEntity {
+public class Product extends BaseEntity {
 	@Id @Column
-	private String userId;
-	@Column
-	private String userName;
-	@Column
-	private Integer age;
-	@Column
-	private String etc;
-	@Column @Enumerated(EnumType.STRING)
-	private UserStatus userStatus;
-	@Column
-	private BigDecimal haveMoney;
+	private String productId;
 }
