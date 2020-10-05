@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 @MappedSuperclass
 public abstract class BaseEntity {
 
+	private String rowStsCd = "U";
+
 	@SneakyThrows
 	public <Entity extends BaseEntity> Entity update(Entity newEntity, String ...ignoreColumns) {
 		// BaseEntity를 상속받았지만, this와 newEntity가 서로 다른 엔티티일 경우 에러 발생.
@@ -24,7 +26,8 @@ public abstract class BaseEntity {
 			throw new RuntimeException(message);
 		}
 		List<String> ignoreColumnChecker = Arrays.asList(ignoreColumns);
-		Field[] declaredFields = newEntity.getClass().getDeclaredFields();
+		Class<? extends BaseEntity> clazz = newEntity.getClass();
+		Field[] declaredFields = clazz.getDeclaredFields();
 		for (Field field : declaredFields) {
 			if(ignoreColumnChecker.contains(field.getName())){
 				continue;
@@ -39,6 +42,12 @@ public abstract class BaseEntity {
 			log.debug("fieldName: {}, value: {}", field.getName(), field.get(newEntity));
 			field.set(this, field.get(newEntity));
 		}
+
+		// 부모클래스 field취득
+		Field rowStsCd = clazz.getSuperclass().getDeclaredField("rowStsCd");
+		rowStsCd.setAccessible(true);
+		rowStsCd.set(this, rowStsCd.get(newEntity));
+
 		return (Entity) this;
 	}
 
@@ -54,4 +63,11 @@ public abstract class BaseEntity {
 				.count() > 0;
 	}
 
+	public String getRowStsCd() {
+		return rowStsCd;
+	}
+
+	public void setRowStsCd(String rowStsCd) {
+		this.rowStsCd = rowStsCd;
+	}
 }

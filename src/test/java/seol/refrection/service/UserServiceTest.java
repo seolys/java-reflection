@@ -74,13 +74,16 @@ class UserServiceTest {
 				.userStatus(UserStatus.B)
 				.haveMoney(new BigDecimal(1000))
 				.build();
-		managedUser.update(newUser, "etc", "userName");
+		newUser.setRowStsCd("D");
+		User update = managedUser.update(newUser, "etc", "userName");
+		log.info("update.getRowStsCd() : " + update.getRowStsCd());
 		flushAndClear();
+
 
 		Product otherEntity1 = Product.builder().productId("pro").build();
 		Exception exception = Assertions.assertThrows(Exception.class, () ->
 				managedUser.update(otherEntity1, "etc", "userName"));
-		log.info(exception.getMessage());
+		log.info("exception : " + exception.getMessage());
 
 //		System otherEntity2 = System.builder().systemId("sys").build();
 //		Assertions.assertThrows(Exception.class, () ->
