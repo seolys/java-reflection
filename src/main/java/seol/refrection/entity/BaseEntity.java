@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class BaseEntity {
 
 	@SneakyThrows
-	public <Entity extends BaseEntity> void update(Entity newEntity, String ...ignoreColumns) {
+	public <Entity extends BaseEntity> Entity update(Entity newEntity, String ...ignoreColumns) {
 		// BaseEntity를 상속받았지만, this와 newEntity가 서로 다른 엔티티일 경우 에러 발생.
 		if(!this.getClass().isAssignableFrom(newEntity.getClass())) {
 			String message = String.format("Entity mismatch. (updateTarget: %s, newEntity: %s)", this.getClass().getName(),
@@ -39,6 +39,7 @@ public abstract class BaseEntity {
 			log.debug("fieldName: {}, value: {}", field.getName(), field.get(newEntity));
 			field.set(this, field.get(newEntity));
 		}
+		return (Entity) this;
 	}
 
 	private boolean isId(Field field) {
